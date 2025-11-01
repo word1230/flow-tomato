@@ -233,15 +233,8 @@ class TimerManager {
     // 显示通知
     notificationManager.showBreakEndNotification();
     
-    // 检查是否自动开始下一个番茄钟
-    const settings = storageManager.getUserSettings();
-    if (settings.autoStartBreak) {
-      // 自动开始下一个番茄钟
-      this.startNextPomodoro();
-    } else {
-      // 手动开始
-      this.reset();
-    }
+    // 休息结束后不自动开始下一个番茄钟，总是重置为手动开始状态
+    this.reset();
   }
 
   // 开始短休息
