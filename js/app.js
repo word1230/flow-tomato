@@ -237,6 +237,8 @@ class App {
     const autoStartBreakEl = document.getElementById('auto-start-break');
     const notificationEnabledEl = document.getElementById('notification-enabled');
     const soundEnabledEl = document.getElementById('sound-enabled');
+    const testNotificationBtn = document.getElementById('test-notification-btn');
+    const testSoundBtn = document.getElementById('test-sound-btn');
     
     if (!autoStartBreakEl || !notificationEnabledEl || !soundEnabledEl) return;
     
@@ -263,6 +265,30 @@ class App {
         soundEnabled: e.target.checked
       });
     });
+    
+    // 绑定测试按钮事件
+    if (testNotificationBtn) {
+      testNotificationBtn.addEventListener('click', async () => {
+        console.log('测试通知按钮被点击');
+        console.log('通知权限状态:', notificationManager.permission);
+        console.log('通知设置:', storageManager.getUserSettings().notificationEnabled);
+        
+        // 测试通知
+        const result = await notificationManager.showNotification('测试通知', '这是一个测试通知，用于验证通知功能是否正常工作。');
+        console.log('通知显示结果:', result);
+      });
+    }
+    
+    if (testSoundBtn) {
+      testSoundBtn.addEventListener('click', () => {
+        console.log('测试提示音按钮被点击');
+        console.log('音频支持状态:', !!notificationManager.notificationSound);
+        console.log('声音设置:', storageManager.getUserSettings().soundEnabled);
+        
+        // 测试提示音
+        notificationManager.playNotificationSound();
+      });
+    }
   }
 
   // 加载设置

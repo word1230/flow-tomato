@@ -533,6 +533,28 @@ body {
   height: 18px;
 }
 
+.setting-test {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.setting-test h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.test-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.test-buttons .btn {
+  flex: 1;
+}
+
 /* 自定义确认对话框样式 */
 .confirm-dialog-content {
   max-width: 400px;
