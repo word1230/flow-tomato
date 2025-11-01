@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow Tomato - 心流番茄钟</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 登录界面 -->
+    <div id="login-screen" class="screen">
+        <div class="login-container">
+            <h1 class="app-title">Flow Tomato</h1>
+            <p class="app-subtitle">心流番茄钟</p>
+            <div class="login-form">
+                <input type="text" id="user-key" placeholder="输入你的访问密钥" class="key-input">
+                <button id="login-btn" class="btn btn-primary">进入</button>
+            </div>
+            <p class="login-hint">使用任意字符串作为你的个人空间密钥</p>
+        </div>
+    </div>
+
+    <!-- 主应用界面 -->
+    <div id="main-app" class="screen hidden">
+        <!-- 顶部统计栏 -->
+        <header class="app-header">
+            <div class="header-left">
+                <h1 class="app-logo">Flow Tomato</h1>
+                <div class="user-info">
+                    <span id="user-key-display"></span>
+                    <button id="logout-btn" class="btn-logout">退出</button>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="pomodoro-stats">
+                    <span class="stats-label">累计完成</span>
+                    <span id="total-pomodoros" class="stats-number">0</span>
+                    <span class="stats-label">个番茄</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主要内容区 -->
+        <main class="app-main">
+            <!-- 左侧任务列表 -->
+            <section class="tasks-section">
+                <div class="section-header">
+                    <h2>任务列表</h2>
+                    <div class="add-task-container">
+                        <input type="text" id="new-task-input" placeholder="添加新任务，按回车确认" class="task-input">
+                    </div>
+                </div>
+                <ul id="tasks-list" class="tasks-list">
+                    <!-- 任务项将通过JS动态添加 -->
+                </ul>
+            </section>
+
+            <!-- 右侧工作区 -->
+            <section class="workspace-section">
+                <!-- 计时器区域 -->
+                <div class="timer-container">
+                    <div id="timer-display" class="timer-display">25:00</div>
+                    <div id="timer-status" class="timer-status">准备开始</div>
+                    <div class="timer-controls">
+                        <button id="start-timer-btn" class="btn btn-primary">开始</button>
+                        <button id="pause-timer-btn" class="btn btn-secondary hidden">暂停</button>
+                        <button id="reset-timer-btn" class="btn btn-tertiary">重置</button>
+                    </div>
+                    <div class="current-task-info">
+                        <span id="current-task-name">未选择任务</span>
+                    </div>
+                </div>
+
+                <!-- 思路规划区 -->
+                <div class="idea-zone-container">
+                    <div class="idea-zone-header">
+                        <h3>思路规划区</h3>
+                        <span id="idea-zone-task-name">请选择一个任务</span>
+                    </div>
+                    <textarea id="idea-zone" class="idea-zone" placeholder="在这里记录任务拆解的思路、步骤、笔记等..." disabled></textarea>
+                </div>
+            </section>
+        </main>
+
+        <!-- 设置弹窗 -->
+        <div id="settings-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>设置</h2>
+                    <button id="close-settings-btn" class="btn-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="setting-item">
+                        <label for="auto-start-break">
+                            <input type="checkbox" id="auto-start-break">
+                            工作结束后自动开始休息
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label for="notification-enabled">
+                            <input type="checkbox" id="notification-enabled" checked>
+                            启用桌面通知
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label for="sound-enabled">
+                            <input type="checkbox" id="sound-enabled" checked>
+                            启用声音提醒
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 任务完成确认弹窗 -->
+        <div id="task-complete-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>任务完成确认</h2>
+                </div>
+                <div class="modal-body">
+                    <p id="task-complete-message">已完成所有计划的番茄钟，是否将此任务标记为完成？</p>
+                </div>
+                <div class="modal-footer">
+                    <button id="confirm-task-complete" class="btn btn-primary">标记完成</button>
+                    <button id="cancel-task-complete" class="btn btn-secondary">继续工作</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 设置按钮 -->
+        <button id="settings-btn" class="btn-settings">⚙️</button>
+    </div>
+
+    <!-- JavaScript 文件 -->
+    <script src="js/storage.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/tasks.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
