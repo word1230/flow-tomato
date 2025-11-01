@@ -23,7 +23,7 @@ yarn-error.log*
 # 依赖目录
 node_modules/
 bower_components/
-
+.trae/
 # 构建输出
 dist/
 build/

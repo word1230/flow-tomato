@@ -533,6 +533,24 @@ body {
   height: 18px;
 }
 
+/* 自定义确认对话框样式 */
+.confirm-dialog-content {
+  max-width: 400px;
+  text-align: center;
+  padding: 32px 24px;
+}
+
+.confirm-dialog-footer {
+  justify-content: space-between;
+  padding-top: 24px;
+}
+
+#confirm-message {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .app-main {

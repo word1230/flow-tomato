@@ -201,6 +201,12 @@ class TaskManager {
       if (e.target === pomodoroInput || e.target === checkbox || e.target === deleteBtn || e.target.classList.contains('task-start-pomodoro')) {
         return;
       }
+      
+      // 如果计时器正在运行且点击的是当前任务，不做任何操作
+      if (window.timerManager && window.timerManager.isRunning && task.id === this.currentTaskId) {
+        return;
+      }
+      
       this.selectTask(task.id);
     });
     
@@ -267,6 +273,47 @@ class TaskManager {
 
   // 选择任务
   selectTask(taskId) {
+    // 检查计时器是否正在运行
+    if (window.timerManager && window.timerManager.isRunning) {
+      // 如果选择的是当前任务，不做任何操作
+      if (taskId === this.currentTaskId) {
+        return;
+      }
+      
+      // 如果选择的是其他任务，显示确认对话框
+      if (window.app && window.app.showConfirmDialog) {
+        window.app.showConfirmDialog(
+          '计时器正在运行中，确定要切换任务吗？当前计时将被重置。',
+          (confirmed) => {
+            if (confirmed) {
+              // 先重置计时器
+              if (window.timerManager) {
+                window.timerManager.reset();
+              }
+              // 然后切换任务
+              this.doSelectTask(taskId);
+            }
+          }
+        );
+        return;
+      } else {
+        // 如果自定义对话框不可用，使用默认confirm作为后备
+        if (!confirm('计时器正在运行中，确定要切换任务吗？当前计时将被重置。')) {
+          return;
+        }
+        // 如果确认，重置计时器并切换任务
+        if (window.timerManager) {
+          window.timerManager.reset();
+        }
+      }
+    }
+    
+    // 如果计时器不运行，或者用户确认了切换，则执行任务切换
+    this.doSelectTask(taskId);
+  }
+  
+  // 实际执行任务选择
+  doSelectTask(taskId) {
     this.currentTaskId = taskId;
     
     // 更新任务列表中的活动状态
@@ -313,7 +360,7 @@ class TaskManager {
     
     // 通知计时器模块任务已更改
     if (window.timerManager) {
-      window.timerManager.setCurrentTask(taskId);
+      window.timerManager.setCurrentTaskWithoutReset(taskId);
     }
   }
 

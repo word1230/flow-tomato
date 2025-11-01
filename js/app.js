@@ -11,6 +11,11 @@ class App {
     this.settingsBtn = null;
     this.settingsModal = null;
     this.closeSettingsBtn = null;
+    this.confirmDialog = null;
+    this.confirmMessage = null;
+    this.confirmOkBtn = null;
+    this.confirmCancelBtn = null;
+    this.confirmCallback = null;
   }
 
   // 初始化应用
@@ -25,6 +30,9 @@ class App {
     this.settingsBtn = document.getElementById('settings-btn');
     this.settingsModal = document.getElementById('settings-modal');
     this.closeSettingsBtn = document.getElementById('close-settings-btn');
+    
+    // 初始化自定义确认对话框
+    this.initConfirmDialog();
     
     // 初始化存储管理器
     if (storageManager.init()) {
@@ -49,6 +57,60 @@ class App {
     
     // 初始化设置
     this.initSettings();
+  }
+
+  // 初始化自定义确认对话框
+  initConfirmDialog() {
+    // 获取确认对话框元素
+    this.confirmDialog = document.getElementById('confirm-dialog');
+    this.confirmMessage = document.getElementById('confirm-message');
+    this.confirmOkBtn = document.getElementById('confirm-ok');
+    this.confirmCancelBtn = document.getElementById('confirm-cancel');
+    
+    // 绑定确认对话框事件
+    this.confirmOkBtn.addEventListener('click', () => {
+      this.hideConfirmDialog();
+      if (this.confirmCallback) {
+        const callback = this.confirmCallback;
+        this.confirmCallback = null;
+        callback(true);
+      }
+    });
+    
+    this.confirmCancelBtn.addEventListener('click', () => {
+      this.hideConfirmDialog();
+      if (this.confirmCallback) {
+        const callback = this.confirmCallback;
+        this.confirmCallback = null;
+        callback(false);
+      }
+    });
+    
+    // 点击对话框外部关闭
+    this.confirmDialog.addEventListener('click', (e) => {
+      if (e.target === this.confirmDialog) {
+        this.hideConfirmDialog();
+        if (this.confirmCallback) {
+          const callback = this.confirmCallback;
+          this.confirmCallback = null;
+          callback(false);
+        }
+      }
+    });
+  }
+
+  // 显示确认对话框
+  showConfirmDialog(message, callback) {
+    this.confirmMessage.textContent = message;
+    this.confirmCallback = callback;
+    this.confirmDialog.classList.remove('hidden');
+  }
+
+  // 隐藏确认对话框
+  hideConfirmDialog() {
+    this.confirmDialog.classList.add('hidden');
+    // 不要在这里清除回调，因为它可能还在执行中
+    // 回调将在执行完成后由调用方清除
   }
 
   // 绑定事件

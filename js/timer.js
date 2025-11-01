@@ -64,6 +64,14 @@ class TimerManager {
     this.updateStatus();
   }
 
+  // 设置当前任务（不重置计时器）
+  setCurrentTaskWithoutReset(taskId) {
+    this.currentTaskId = taskId;
+    
+    // 更新状态显示
+    this.updateStatus();
+  }
+
   // 开始计时
   start() {
     // 检查是否有当前任务
