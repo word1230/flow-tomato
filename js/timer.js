@@ -49,6 +49,8 @@ class TimerManager {
     if (this.resetBtn) {
       this.resetBtn.addEventListener('click', () => this.reset());
     }
+    
+
   }
 
   // 设置当前任务
@@ -233,8 +235,19 @@ class TimerManager {
     // 显示通知
     notificationManager.showBreakEndNotification();
     
-    // 休息结束后不自动开始下一个番茄钟，总是重置为手动开始状态
-    this.reset();
+    // 休息结束后，重置为番茄钟模式但不自动开始
+    this.isBreak = false;
+    this.isLongBreak = false;
+    this.timeRemaining = this.workDuration;
+    
+    // 重置运行状态
+    this.isRunning = false;
+    this.isPaused = false;
+    
+    // 更新显示
+    this.updateDisplay();
+    this.updateStatus();
+    this.updateButtonStates();
   }
 
   // 开始短休息
@@ -378,6 +391,8 @@ class TimerManager {
       }
     }
   }
+  
+
 }
 
 // 创建全局计时器管理器实例
