@@ -370,11 +370,6 @@ class TaskManager {
     if (!task) return;
     
     this.updateTask(taskId, { completed: !task.completed });
-    
-    // 如果任务被标记为完成，且是当前任务，则取消选择
-    if (!task.completed && taskId === this.currentTaskId) {
-      this.selectTask(null);
-    }
   }
 
   // 更新任务预估番茄数

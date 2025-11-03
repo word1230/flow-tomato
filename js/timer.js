@@ -316,6 +316,8 @@ class TimerManager {
       newConfirmBtn.addEventListener('click', () => {
         if (this.currentTaskId && window.taskManager) {
           window.taskManager.toggleTaskComplete(this.currentTaskId);
+          // 标记任务完成后，直接取消选择任务，不触发切换任务弹窗
+          window.taskManager.doSelectTask(null);
         }
         modal.classList.add('hidden');
         this.reset();

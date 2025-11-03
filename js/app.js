@@ -2,10 +2,7 @@
 
 class App {
   constructor() {
-    this.loginScreen = null;
     this.mainApp = null;
-    this.userKeyInput = null;
-    this.loginBtn = null;
     this.userKeyDisplay = null;
     this.logoutBtn = null;
     this.settingsBtn = null;
@@ -21,10 +18,7 @@ class App {
   // 初始化应用
   async init() {
     // 获取DOM元素
-    this.loginScreen = document.getElementById('login-screen');
     this.mainApp = document.getElementById('main-app');
-    this.userKeyInput = document.getElementById('user-key');
-    this.loginBtn = document.getElementById('login-btn');
     this.userKeyDisplay = document.getElementById('user-key-display');
     this.logoutBtn = document.getElementById('logout-btn');
     this.settingsBtn = document.getElementById('settings-btn');
@@ -35,13 +29,10 @@ class App {
     this.initConfirmDialog();
     
     // 初始化存储管理器
-    if (storageManager.init()) {
-      // 如果有已保存的用户密钥，直接进入主应用
-      this.showMainApp();
-    } else {
-      // 显示登录界面
-      this.showLoginScreen();
-    }
+    storageManager.init();
+    
+    // 直接显示主应用
+    this.showMainApp();
     
     // 绑定事件
     this.bindEvents();
@@ -115,21 +106,7 @@ class App {
 
   // 绑定事件
   bindEvents() {
-    // 登录按钮事件
-    if (this.loginBtn) {
-      this.loginBtn.addEventListener('click', () => this.login());
-    }
-    
-    // 用户密钥输入框回车事件
-    if (this.userKeyInput) {
-      this.userKeyInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          this.login();
-        }
-      });
-    }
-    
-    // 登出按钮事件
+    // 登出按钮事件（如果保留）
     if (this.logoutBtn) {
       this.logoutBtn.addEventListener('click', () => this.logout());
     }
@@ -154,59 +131,24 @@ class App {
     }
   }
 
-  // 登录
-  login() {
-    const userKey = this.userKeyInput.value.trim();
-    
-    if (!userKey) {
-      alert('请输入访问密钥');
-      return;
-    }
-    
-    try {
-      // 设置用户密钥
-      storageManager.setUserKey(userKey);
-      
-      // 显示主应用
-      this.showMainApp();
-    } catch (error) {
-      console.error('登录失败:', error);
-      alert(error.message);
-    }
-  }
-
-  // 登出
+  // 登出（可选功能）
   logout() {
-    if (confirm('确定要退出吗？你的数据将保存在本地，下次使用相同密钥可以继续访问。')) {
-      // 登出
-      storageManager.logout();
+    if (confirm('确定要重置所有数据吗？')) {
+      // 清除所有数据
+      localStorage.clear();
       
-      // 显示登录界面
-      this.showLoginScreen();
-    }
-  }
-
-  // 显示登录界面
-  showLoginScreen() {
-    if (this.loginScreen) this.loginScreen.classList.remove('hidden');
-    if (this.mainApp) this.mainApp.classList.add('hidden');
-    
-    // 清空输入框
-    if (this.userKeyInput) {
-      this.userKeyInput.value = '';
-      this.userKeyInput.focus();
+      // 重新初始化
+      location.reload();
     }
   }
 
   // 显示主应用
   showMainApp() {
-    if (this.loginScreen) this.loginScreen.classList.add('hidden');
     if (this.mainApp) this.mainApp.classList.remove('hidden');
     
-    // 显示用户密钥
-    const userKey = storageManager.getUserKey();
-    if (this.userKeyDisplay && userKey) {
-      this.userKeyDisplay.textContent = userKey;
+    // 隐藏用户信息区域（可选）
+    if (this.userKeyDisplay) {
+      this.userKeyDisplay.parentElement.style.display = 'none';
     }
     
     // 重新加载任务数据

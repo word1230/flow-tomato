@@ -2,60 +2,26 @@
 
 class StorageManager {
   constructor() {
-    this.currentUserKey = null;
+    // 不再需要用户密钥
   }
 
   // 初始化存储管理器
   init() {
-    // 检查是否有之前保存的用户密钥
-    const savedKey = localStorage.getItem('flowTomatoUserKey');
-    if (savedKey) {
-      this.currentUserKey = savedKey;
-      return true;
-    }
-    return false;
-  }
-
-  // 设置当前用户密钥
-  setUserKey(key) {
-    if (!key || key.trim() === '') {
-      throw new Error('用户密钥不能为空');
-    }
-    
-    this.currentUserKey = key.trim();
-    localStorage.setItem('flowTomatoUserKey', this.currentUserKey);
-    
-    // 如果是新用户，初始化用户数据
+    // 检查是否有之前保存的数据
     if (!this.getUserData()) {
       this.initUserData();
     }
-    
-    return this.currentUserKey;
-  }
-
-  // 获取当前用户密钥
-  getUserKey() {
-    return this.currentUserKey;
-  }
-
-  // 登出，清除当前用户密钥
-  logout() {
-    this.currentUserKey = null;
-    localStorage.removeItem('flowTomatoUserKey');
+    return true;
   }
 
   // 获取用户数据存储键
   getUserDataKey() {
-    if (!this.currentUserKey) {
-      throw new Error('未设置用户密钥');
-    }
-    return `flowTomato_${this.currentUserKey}`;
+    return 'flowTomato_data';
   }
 
   // 初始化用户数据
   initUserData() {
     const userData = {
-      key: this.currentUserKey,
       tasks: [],
       totalPomodoros: 0,
       settings: {
@@ -71,10 +37,6 @@ class StorageManager {
 
   // 获取用户数据
   getUserData() {
-    if (!this.currentUserKey) {
-      return null;
-    }
-    
     try {
       const dataKey = this.getUserDataKey();
       const userData = localStorage.getItem(dataKey);
@@ -87,10 +49,6 @@ class StorageManager {
 
   // 保存用户数据
   saveUserData(userData) {
-    if (!this.currentUserKey) {
-      throw new Error('未设置用户密钥');
-    }
-    
     try {
       const dataKey = this.getUserDataKey();
       localStorage.setItem(dataKey, JSON.stringify(userData));
