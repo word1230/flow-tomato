@@ -279,24 +279,48 @@ body {
 .task-pomodoros {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   font-size: 14px;
   margin-right: 4px;
 }
 
-.pomodoro-input {
-  width: 36px;
-  padding: 2px;
+.pomodoro-control-btn {
+  width: 24px;
+  height: 24px;
   border: 1px solid var(--border-color);
+  background-color: var(--surface-color);
   border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.pomodoro-control-btn:hover {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.pomodoro-control-btn:active {
+  transform: scale(0.95);
+}
+
+.pomodoro-count {
+  min-width: 20px;
   text-align: center;
-  font-size: 12px;
+  font-weight: 500;
 }
 
 .pomodoro-progress {
   font-size: 11px;
   color: var(--text-secondary);
   margin-left: 2px;
+  min-width: 50px; /* 确保即使没有内容也占据固定空间 */
+  white-space: nowrap; /* 防止内容换行 */
 }
 
 .task-checkbox {

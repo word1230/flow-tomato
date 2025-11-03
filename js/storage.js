@@ -5,6 +5,18 @@ class StorageManager {
     // 不再需要用户密钥
   }
 
+  // 默认用户设置
+  defaultUserSettings = {
+    workDuration: 25 * 60, // 25分钟
+    shortBreakDuration: 5 * 60, // 5分钟
+    longBreakDuration: 15 * 60, // 15分钟
+    autoStartBreak: true,
+    autoStartWork: true,
+    testMode: false,
+    notificationEnabled: true,
+    soundEnabled: true
+  };
+
   // 初始化存储管理器
   init() {
     // 检查是否有之前保存的数据
@@ -26,6 +38,8 @@ class StorageManager {
       totalPomodoros: 0,
       settings: {
         autoStartBreak: true,
+        autoStartWork: true,
+        testMode: false,
         notificationEnabled: true,
         soundEnabled: true
       }
@@ -188,6 +202,8 @@ class StorageManager {
     if (!userData) {
       return {
         autoStartBreak: true,
+        autoStartWork: true,
+        testMode: false,
         notificationEnabled: true,
         soundEnabled: true
       };

@@ -122,37 +122,54 @@ class TaskManager {
     const taskActions = document.createElement('div');
     taskActions.className = 'task-actions';
     
-    // 番茄钟数输入
+    // 番茄钟数控制
     const pomodorosContainer = document.createElement('div');
     pomodorosContainer.className = 'task-pomodoros';
     
-    const pomodoroInput = document.createElement('input');
-    pomodoroInput.type = 'number';
-    pomodoroInput.className = 'pomodoro-input';
-    pomodoroInput.min = '0';
-    pomodoroInput.max = '99';
-    pomodoroInput.value = task.estimatedPomodoros;
-    pomodoroInput.addEventListener('change', (e) => {
-      const value = parseInt(e.target.value) || 0;
-      this.updateTaskEstimatedPomodoros(task.id, value);
-    });
-    pomodoroInput.addEventListener('click', (e) => {
+    // 减少番茄数按钮
+    const decreasePomodoroBtn = document.createElement('button');
+    decreasePomodoroBtn.className = 'pomodoro-control-btn decrease';
+    decreasePomodoroBtn.textContent = '-';
+    decreasePomodoroBtn.addEventListener('click', (e) => {
       e.stopPropagation(); // 防止触发任务选择
+      const currentPomodoros = task.estimatedPomodoros || 0;
+      if (currentPomodoros > 0) {
+        this.updateTaskEstimatedPomodoros(task.id, currentPomodoros - 1);
+      }
+    });
+    
+    // 番茄数显示
+    const pomodoroCount = document.createElement('span');
+    pomodoroCount.className = 'pomodoro-count';
+    pomodoroCount.textContent = task.estimatedPomodoros || 0;
+    
+    // 增加番茄数按钮
+    const increasePomodoroBtn = document.createElement('button');
+    increasePomodoroBtn.className = 'pomodoro-control-btn increase';
+    increasePomodoroBtn.textContent = '+';
+    increasePomodoroBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // 防止触发任务选择
+      const currentPomodoros = task.estimatedPomodoros || 0;
+      if (currentPomodoros < 99) {
+        this.updateTaskEstimatedPomodoros(task.id, currentPomodoros + 1);
+      }
     });
     
     const pomodoroLabel = document.createElement('span');
     pomodoroLabel.textContent = '番茄';
     
-    pomodorosContainer.appendChild(pomodoroInput);
+    pomodorosContainer.appendChild(decreasePomodoroBtn);
+    pomodorosContainer.appendChild(pomodoroCount);
+    pomodorosContainer.appendChild(increasePomodoroBtn);
     pomodorosContainer.appendChild(pomodoroLabel);
     
-    // 番茄进度
+    // 番茄进度 - 始终创建元素，但只在番茄数大于0时显示内容
+    const pomodoroProgress = document.createElement('div');
+    pomodoroProgress.className = 'pomodoro-progress';
     if (task.estimatedPomodoros > 0) {
-      const pomodoroProgress = document.createElement('div');
-      pomodoroProgress.className = 'pomodoro-progress';
       pomodoroProgress.textContent = `(${task.completedPomodoros}/${task.estimatedPomodoros})`;
-      pomodorosContainer.appendChild(pomodoroProgress);
     }
+    pomodorosContainer.appendChild(pomodoroProgress);
     
     // 完成复选框
     const checkbox = document.createElement('input');
@@ -197,8 +214,8 @@ class TaskManager {
     
     // 点击任务选择任务
     li.addEventListener('click', (e) => {
-      // 如果点击的是输入框、复选框、删除按钮或开始番茄按钮，不选择任务
-      if (e.target === pomodoroInput || e.target === checkbox || e.target === deleteBtn || e.target.classList.contains('task-start-pomodoro')) {
+      // 如果点击的是番茄控制按钮、复选框、删除按钮或开始番茄按钮，不选择任务
+      if (e.target.classList.contains('pomodoro-control-btn') || e.target === pomodoroCount || e.target === checkbox || e.target === deleteBtn || e.target.classList.contains('task-start-pomodoro')) {
         return;
       }
       

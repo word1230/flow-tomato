@@ -32,8 +32,41 @@ class TimerManager {
     // 绑定事件
     this.bindEvents();
     
+    // 初始化时间设置
+    this.updateDurations();
+    
     // 初始化显示
     this.updateDisplay();
+  }
+
+  // 更新时间设置
+  updateDurations() {
+    const settings = storageManager.getUserSettings();
+    const isTestMode = settings.testMode;
+    
+    if (isTestMode) {
+      // 测试模式：时间缩短为5秒
+      this.workDuration = 5;
+      this.shortBreakDuration = 5;
+      this.longBreakDuration = 5;
+    } else {
+      // 正常模式
+      this.workDuration = 25 * 60; // 25分钟
+      this.shortBreakDuration = 5 * 60; // 5分钟
+      this.longBreakDuration = 15 * 60; // 15分钟
+    }
+    
+    // 如果计时器没有运行，更新当前剩余时间
+    if (!this.isRunning) {
+      if (this.isBreak) {
+        this.timeRemaining = this.isLongBreak ? this.longBreakDuration : this.shortBreakDuration;
+      } else {
+        this.timeRemaining = this.workDuration;
+      }
+      
+      // 更新显示
+      this.updateDisplay();
+    }
   }
 
   // 绑定事件
@@ -235,7 +268,7 @@ class TimerManager {
     // 显示通知
     notificationManager.showBreakEndNotification();
     
-    // 休息结束后，重置为番茄钟模式但不自动开始
+    // 休息结束后，重置为番茄钟模式
     this.isBreak = false;
     this.isLongBreak = false;
     this.timeRemaining = this.workDuration;
@@ -248,6 +281,11 @@ class TimerManager {
     this.updateDisplay();
     this.updateStatus();
     this.updateButtonStates();
+    
+    // 如果设置了自动开始工作，则自动开始下一个番茄钟
+    if (storageManager.getUserSettings().autoStartWork) {
+      this.start();
+    }
   }
 
   // 开始短休息

@@ -177,18 +177,37 @@ class App {
   initSettings() {
     // 获取设置元素
     const autoStartBreakEl = document.getElementById('auto-start-break');
+    const autoStartWorkEl = document.getElementById('auto-start-work');
+    const testModeEl = document.getElementById('test-mode');
     const notificationEnabledEl = document.getElementById('notification-enabled');
     const soundEnabledEl = document.getElementById('sound-enabled');
     const testNotificationBtn = document.getElementById('test-notification-btn');
     const testSoundBtn = document.getElementById('test-sound-btn');
     
-    if (!autoStartBreakEl || !notificationEnabledEl || !soundEnabledEl) return;
+    if (!autoStartBreakEl || !autoStartWorkEl || !testModeEl || !notificationEnabledEl || !soundEnabledEl) return;
     
     // 绑定设置变更事件
     autoStartBreakEl.addEventListener('change', (e) => {
       storageManager.updateUserSettings({
         autoStartBreak: e.target.checked
       });
+    });
+    
+    autoStartWorkEl.addEventListener('change', (e) => {
+      storageManager.updateUserSettings({
+        autoStartWork: e.target.checked
+      });
+    });
+    
+    testModeEl.addEventListener('change', (e) => {
+      storageManager.updateUserSettings({
+        testMode: e.target.checked
+      });
+      
+      // 如果切换测试模式，需要重新初始化计时器
+      if (window.timerManager) {
+        window.timerManager.updateDurations();
+      }
     });
     
     notificationEnabledEl.addEventListener('change', (e) => {
@@ -239,13 +258,17 @@ class App {
     
     // 获取设置元素
     const autoStartBreakEl = document.getElementById('auto-start-break');
+    const autoStartWorkEl = document.getElementById('auto-start-work');
+    const testModeEl = document.getElementById('test-mode');
     const notificationEnabledEl = document.getElementById('notification-enabled');
     const soundEnabledEl = document.getElementById('sound-enabled');
     
-    if (!autoStartBreakEl || !notificationEnabledEl || !soundEnabledEl) return;
+    if (!autoStartBreakEl || !autoStartWorkEl || !testModeEl || !notificationEnabledEl || !soundEnabledEl) return;
     
     // 设置值
     autoStartBreakEl.checked = settings.autoStartBreak;
+    autoStartWorkEl.checked = settings.autoStartWork;
+    testModeEl.checked = settings.testMode;
     notificationEnabledEl.checked = settings.notificationEnabled;
     soundEnabledEl.checked = settings.soundEnabled;
   }
