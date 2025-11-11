@@ -38,6 +38,9 @@ class TimerManager {
     // 绑定事件
     this.bindEvents();
     
+    // 初始化页面可见性变化监听器
+    this.initVisibilityListener();
+    
     // 初始化时间设置
     this.updateDurations();
     
@@ -88,8 +91,28 @@ class TimerManager {
     if (this.resetBtn) {
       this.resetBtn.addEventListener('click', () => this.reset());
     }
-    
+  }
 
+  // 初始化页面可见性变化监听器
+  initVisibilityListener() {
+    // 监听页面可见性变化
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        // 当页面重新可见时，立即同步时间显示和标题
+        this.syncTimeDisplay();
+      }
+    });
+  }
+
+  // 同步时间显示和页面标题
+  syncTimeDisplay() {
+    if (this.isRunning && !this.isPaused) {
+      // 如果计时器正在运行，立即计算当前时间并更新显示
+      this.tick();
+    } else {
+      // 如果计时器没有运行，只更新显示
+      this.updateDisplay();
+    }
   }
 
   // 设置当前任务
@@ -101,6 +124,9 @@ class TimerManager {
       this.reset();
     }
     
+    // 同步时间显示
+    this.syncTimeDisplay();
+    
     // 更新状态显示
     this.updateStatus();
   }
@@ -108,6 +134,9 @@ class TimerManager {
   // 设置当前任务（不重置计时器）
   setCurrentTaskWithoutReset(taskId) {
     this.currentTaskId = taskId;
+    
+    // 同步时间显示
+    this.syncTimeDisplay();
     
     // 更新状态显示
     this.updateStatus();
