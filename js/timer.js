@@ -18,6 +18,12 @@ class TimerManager {
     this.longBreakDuration = 15 * 60; // 长休息时间（秒）
     this.pomodoroCount = 0; // 连续完成的番茄钟数
     this.timerInterval = null;
+    
+    // 修复后台计时问题的关键属性
+    this.startTime = null; // 计时器开始时间（时间戳）
+    this.pauseStartTime = null; // 暂停开始时间（时间戳）
+    this.pausedTime = 0; // 累计暂停时间（毫秒）
+    this.lastTickTime = null; // 上次tick时间（用于计算时间差）
   }
 
   // 初始化计时器
@@ -125,14 +131,23 @@ class TimerManager {
     this.isRunning = true;
     this.isPaused = false;
     
+    // 记录开始时间和上次tick时间
+    this.startTime = Date.now();
+    this.lastTickTime = Date.now();
+    
+    // 如果不是暂停恢复，清除累计暂停时间
+    if (!this.pauseStartTime) {
+      this.pausedTime = 0;
+    }
+    
     // 更新按钮状态
     this.updateButtonStates();
     
     // 更新状态显示
     this.updateStatus();
     
-    // 启动计时器
-    this.timerInterval = setInterval(() => this.tick(), 1000);
+    // 启动计时器 - 减少到每250ms检查一次，提高精度
+    this.timerInterval = setInterval(() => this.tick(), 250);
   }
 
   // 暂停计时
@@ -140,6 +155,7 @@ class TimerManager {
     if (!this.isRunning || this.isPaused) return;
     
     this.isPaused = true;
+    this.pauseStartTime = Date.now();
     
     // 更新按钮状态
     this.updateButtonStates();
@@ -158,14 +174,23 @@ class TimerManager {
     
     this.isPaused = false;
     
+    // 计算累计暂停时间
+    if (this.pauseStartTime) {
+      this.pausedTime += Date.now() - this.pauseStartTime;
+      this.pauseStartTime = null;
+    }
+    
+    // 重新设置上次tick时间
+    this.lastTickTime = Date.now();
+    
     // 更新按钮状态
     this.updateButtonStates();
     
     // 更新状态显示
     this.updateStatus();
     
-    // 重新启动计时器
-    this.timerInterval = setInterval(() => this.tick(), 1000);
+    // 重新启动计时器 - 减少到每250ms检查一次，提高精度
+    this.timerInterval = setInterval(() => this.tick(), 250);
   }
 
   // 重置计时器
@@ -177,6 +202,10 @@ class TimerManager {
     // 重置状态
     this.isRunning = false;
     this.isPaused = false;
+    this.startTime = null;
+    this.lastTickTime = null;
+    this.pauseStartTime = null;
+    this.pausedTime = 0;
     
     // 如果不是休息时间，重置为工作时间
     if (!this.isBreak) {
@@ -194,18 +223,36 @@ class TimerManager {
     this.updateStatus();
   }
 
-  // 计时器滴答
+  // 计时器滴答 - 基于时间差的准确计时
   tick() {
-    // 减少剩余时间
-    this.timeRemaining--;
+    // 获取当前时间
+    const now = Date.now();
     
-    // 更新显示
-    this.updateDisplay();
+    // 计算实际经过的时间（考虑暂停时间）
+    const elapsed = now - this.startTime - this.pausedTime;
     
-    // 检查时间是否到了
-    if (this.timeRemaining <= 0) {
-      this.timerComplete();
+    // 计算应该剩余的时间（秒）
+    const targetDuration = this.isBreak ? 
+      (this.isLongBreak ? this.longBreakDuration : this.shortBreakDuration) : 
+      this.workDuration;
+    
+    const newTimeRemaining = Math.max(0, targetDuration - Math.floor(elapsed / 1000));
+    
+    // 只有当时间真的改变时才更新显示和检查完成
+    if (newTimeRemaining !== this.timeRemaining) {
+      this.timeRemaining = newTimeRemaining;
+      
+      // 更新显示
+      this.updateDisplay();
+      
+      // 检查时间是否到了
+      if (this.timeRemaining <= 0) {
+        this.timerComplete();
+      }
     }
+    
+    // 更新上次tick时间
+    this.lastTickTime = now;
   }
 
   // 计时器完成
@@ -273,9 +320,13 @@ class TimerManager {
     this.isLongBreak = false;
     this.timeRemaining = this.workDuration;
     
-    // 重置运行状态
+    // 重置运行状态和时间相关状态
     this.isRunning = false;
     this.isPaused = false;
+    this.startTime = null;
+    this.lastTickTime = null;
+    this.pauseStartTime = null;
+    this.pausedTime = 0;
     
     // 更新显示
     this.updateDisplay();
@@ -325,6 +376,12 @@ class TimerManager {
     this.isBreak = false;
     this.isLongBreak = false;
     this.timeRemaining = this.workDuration;
+    
+    // 重置时间相关状态
+    this.startTime = null;
+    this.lastTickTime = null;
+    this.pauseStartTime = null;
+    this.pausedTime = 0;
     
     // 更新显示
     this.updateDisplay();
